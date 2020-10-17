@@ -1,8 +1,12 @@
-import { Body, Controller, Get, Put, Delete, Logger, Post, Param } from '@nestjs/common';
+import { Body, Controller, Get, Put, Delete, Logger, Post, Param, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { Page } from '../common/models/pagination/page.model';
+import { PageRequest } from '../common/models/pagination/page-request.model';
+import { SortDirection } from '../common/models/pagination/sort-direction.enum';
+import { Sort } from '../common/models/pagination/sort.model';
 
 @Controller('users')
 export class UsersController {
@@ -23,9 +27,14 @@ export class UsersController {
   }
 
   @Get()
-  public async getAllUsers(): Promise<User[]> {
+  public async getAllUsersByPage(
+      @Query('pageNumber') pageNumber: number = 1,
+      @Query('pageSize') pageSize: number = 10,
+      @Query('sortCol') sortCol: string = 'id',
+      @Query('sortDir') sortDir: SortDirection = SortDirection.ASCENDING): Promise<Page<User>> {
     try {
-      return this._usersService.getAllUsers();
+      const pageRequest: PageRequest = PageRequest.from(pageNumber, pageSize, sortCol, sortDir);
+      return this._usersService.getAllUsersByPage(pageRequest);
     } catch (error) {
       this._logger.error(error);
     }

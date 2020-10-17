@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PageRequest } from 'src/common/models/pagination/page-request.model';
+import { Page } from 'src/common/models/pagination/page.model';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -22,6 +24,16 @@ export class UsersService {
 
   public async getAllUsers(): Promise<User[]> {
     return this._usersRepository.find();
+  }
+
+  public async getAllUsersByPage(pageRequest: PageRequest): Promise<Page<User>> {
+    const sort: {[key: string]: string} = pageRequest.sort.asKeyValue();
+    const result = await this._usersRepository.findAndCount({
+      order: sort,
+      skip: ((pageRequest.page - 1) * pageRequest.size),
+      take: pageRequest.size
+    });
+    return this._generatePageResult(result[0], result[1], pageRequest);
   }
 
   public async getUserById(userId: number): Promise<User> {
@@ -50,5 +62,16 @@ export class UsersService {
     }
     this._usersRepository.delete(user);
     return user;
+  }
+
+  private async _generatePageResult(elements: User[], totalElements: number, pageRequest: PageRequest): Promise<Page<User>> {
+    return new Page<User>({
+      elements: elements, 
+      totalElements: totalElements, 
+      totalPages: Math.ceil(totalElements / pageRequest.size),
+      current: pageRequest,
+      next: pageRequest.next(totalElements),
+      previous: pageRequest.previous(totalElements)
+    });
   }
 }
