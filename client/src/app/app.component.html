@@ -22,7 +22,8 @@
         <button 
             class="btn btn-primary mr-2" 
             role="button" 
-            type="button" 
+            type="button"
+            [disabled]="currentPage?.previous?.page > currentPage?.current?.page"
             (click)="prevPage()">
           Previous
         </button>
@@ -30,7 +31,8 @@
         <button 
             class="btn btn-primary ml-2" 
             role="button" 
-            type="button" 
+            type="button"
+            [disabled]="currentPage?.next?.page < currentPage?.current?.page"
             (click)="nextPage()">
           Next
         </button>
