@@ -33,7 +33,7 @@ export class UsersService {
       skip: ((pageRequest.page - 1) * pageRequest.size),
       take: pageRequest.size
     });
-    return this._generatePageResult(result[0], result[1], pageRequest);
+    return Page.from(result[0], result[1], pageRequest);
   }
 
   public async getUserById(userId: number): Promise<User> {
@@ -62,16 +62,5 @@ export class UsersService {
     }
     this._usersRepository.delete(user);
     return user;
-  }
-
-  private async _generatePageResult(elements: User[], totalElements: number, pageRequest: PageRequest): Promise<Page<User>> {
-    return new Page<User>({
-      elements: elements, 
-      totalElements: totalElements, 
-      totalPages: Math.ceil(totalElements / pageRequest.size),
-      current: pageRequest,
-      next: pageRequest.next(totalElements),
-      previous: pageRequest.previous(totalElements)
-    });
   }
 }
