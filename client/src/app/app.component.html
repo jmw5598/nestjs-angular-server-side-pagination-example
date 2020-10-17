@@ -10,18 +10,30 @@
             <th>Email</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+        <tbody *ngIf="currentPage">
+          <tr *ngFor="let user of currentPage?.elements">
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
           </tr>
         </tbody>
       </table>
       <div>
-        <button class="btn btn-primary mr-2" role="button" type="button" (click)="prevPage()">Previous</button>
-        <span>1 of 2</span>
-        <button class="btn btn-primary ml-2" role="button" type="button" (click)="nextPage()">Next</button>
+        <button 
+            class="btn btn-primary mr-2" 
+            role="button" 
+            type="button" 
+            (click)="prevPage()">
+          Previous
+        </button>
+        <span>{{ currentPage?.current?.page }} of {{ currentPage.totalPages }}</span>
+        <button 
+            class="btn btn-primary ml-2" 
+            role="button" 
+            type="button" 
+            (click)="nextPage()">
+          Next
+        </button>
       </div>
     </div>
   </div>
