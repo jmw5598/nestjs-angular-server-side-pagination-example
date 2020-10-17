@@ -7,4 +7,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
+
+  public nextPage(): void {
+
+  }
+
+  public prevPage(): void {
+    
+  }
 }
